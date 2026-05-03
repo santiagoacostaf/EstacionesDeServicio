@@ -1,6 +1,7 @@
 package com.terpel.estacionesdeservicio.controller;
 
-import com.terpel.estacionesdeservicio.entity.EstacionDeServicio;
+import com.terpel.estacionesdeservicio.dto.EstacionDeServicioRequest;
+import com.terpel.estacionesdeservicio.dto.EstacionDeServicioResponse;
 import com.terpel.estacionesdeservicio.service.EstacionDeServicioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class EstacionDeServicioController {
     }
 
     @PostMapping
-    public ResponseEntity<EstacionDeServicio> crear(@RequestBody EstacionDeServicio estacionDeServicio) {
-        EstacionDeServicio estacionCreada = estacionDeServicioService.crear(estacionDeServicio);
+    public ResponseEntity<EstacionDeServicioResponse> crear(@RequestBody EstacionDeServicioRequest request) {
+        EstacionDeServicioResponse estacionCreada = estacionDeServicioService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(estacionCreada);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EstacionDeServicio> consultarPorId(@PathVariable Long id) {
+    public ResponseEntity<EstacionDeServicioResponse> consultarPorId(@PathVariable Long id) {
         return estacionDeServicioService.consultarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -35,17 +36,17 @@ public class EstacionDeServicioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EstacionDeServicio> actualizar(
+    public ResponseEntity<EstacionDeServicioResponse> actualizar(
             @PathVariable Long id,
-            @RequestBody EstacionDeServicio estacionDeServicio
+            @RequestBody EstacionDeServicioRequest request
     ) {
-        return estacionDeServicioService.actualizar(id, estacionDeServicio)
+        return estacionDeServicioService.actualizar(id, request)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<EstacionDeServicio> eliminar(@PathVariable Long id) {
+    public ResponseEntity<EstacionDeServicioResponse> eliminar(@PathVariable Long id) {
         return estacionDeServicioService.eliminarLogicamente(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
