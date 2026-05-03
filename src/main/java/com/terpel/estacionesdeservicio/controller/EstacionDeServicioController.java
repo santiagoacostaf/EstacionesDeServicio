@@ -18,9 +18,14 @@ public class EstacionDeServicioController {
     }
 
     @PostMapping
-    public ResponseEntity<EstacionDeServicioResponse> crear(@RequestBody EstacionDeServicioRequest request) {
-        EstacionDeServicioResponse estacionCreada = estacionDeServicioService.crear(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(estacionCreada);
+    public ResponseEntity<?> crear(@RequestBody EstacionDeServicioRequest request) {
+        try {
+            EstacionDeServicioResponse estacionCreada = estacionDeServicioService.crear(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(estacionCreada);
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("No se pudo crear la estación de servicio porque " + exception.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
@@ -36,13 +41,18 @@ public class EstacionDeServicioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EstacionDeServicioResponse> actualizar(
+    public ResponseEntity<?> actualizar(
             @PathVariable Long id,
             @RequestBody EstacionDeServicioRequest request
     ) {
-        return estacionDeServicioService.actualizar(id, request)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return estacionDeServicioService.actualizar(id, request)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("No se pudo actualizar la estación de servicio porque " + exception.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
