@@ -45,6 +45,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 
 ### 1. Clonar el repositorio
 > git clone https://github.com/santiagoacostaf/EstacionesDeServicio.git
+
 > cd EstacionesDeServicio
 ### 2. Desde tu gestor de base de datos, ejecutar
 > CREATE DATABASE base_estaciones_de_servicio;
@@ -52,7 +53,8 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 ### 4. Compilar el proyecto
 En windows:
 Desde la consola, o el power shell ejecutar:
-> .\mvnw clean spring-boot:run 
+> .\mvnw clean spring-boot:run
+ 
 En linux:
 Desde la consola, ejecutar:
 > ./mvnw clean spring-boot:run
@@ -76,3 +78,50 @@ Desde la consola, ejecutar:
 - Se asume que el consumidor de la API enviará y recibirá información en formato JSON.
 - Se asume que los errores por datos duplicados, como un código repetido, deben tratarse como conflictos de datos.
 
+## Ejemplos para probar los endpoints del crud:
+
+Se va a facilitar una collecciónde postman para probar los endpoints del crud. sin embargo a continuación listaré
+unos ejemplos de como se puede probar cada endpoint en linux.
+
+### Creación:
+
+curl -X POST http://localhost:8080/api/stations   -H "Content-Type: application/json"   -d '{
+"codigo": "EDS-001",
+"nombre": "Estación Principal",
+"direccion": "Calle 123 #45-67",
+"ciudad": "Bogotá",
+"latitud": "4.7110",
+"longitud": "-74.0721",
+"estado": "ACTIVA"
+}'
+
+### Consulta:
+curl -i -X GET http://localhost:8080/api/stations/1
+
+### Listado:
+curl -i -X GET http://localhost:8080/api/stations
+
+### Actualización:
+curl -X PUT http://localhost:8080/api/stations/1   -H "Content-Type: application/json"   -d '{
+"nombre": "Estación Principal",
+"direccion": "Calle 123 #45-67",
+"ciudad": "Bogotá",
+"latitud": "4.7110",
+"longitud": "-74.0721",
+"estado": "ACTIVA"
+}'
+
+### Eliminación:
+curl -X DELETE http://localhost:8080/api/stations/1
+
+## Ejecución de tests de unidad
+
+Se desarrollaron tests de unidad para los métodos de la clase EstacionDeServicioService.
+
+En windows:
+Desde la consola, o el power shell ejecutar:
+> .\mvnw test
+
+En linux:
+Desde la consola, ejecutar:
+> ./mvnw test
