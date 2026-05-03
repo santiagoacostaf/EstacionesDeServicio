@@ -5,6 +5,10 @@ import com.terpel.estacionesdeservicio.dto.EstacionDeServicioResponse;
 import com.terpel.estacionesdeservicio.entity.EstacionDeServicio;
 import com.terpel.estacionesdeservicio.entity.EstadoEstacion;
 import com.terpel.estacionesdeservicio.repository.EstacionDeServicioRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +23,14 @@ public class EstacionDeServicioService {
         this.estacionDeServicioRepository = estacionDeServicioRepository;
     }
 
+    @Caching(
+            put = {
+                    @CachePut(value = "estacionesPorId", key = "#result.id")
+            },
+            evict = {
+                    @CacheEvict(value = "estacionesListado", allEntries = true)
+            }
+    )
     public EstacionDeServicioResponse crear(EstacionDeServicioRequest request) {
         EstacionDeServicio estacionDeServicio = new EstacionDeServicio();
 
@@ -40,11 +52,13 @@ public class EstacionDeServicioService {
         return convertirAResponse(estacionGuardada);
     }
 
+    @Cacheable(value = "estacionesPorId", key = "#id", unless = "#result == null ")
     public Optional<EstacionDeServicioResponse> consultarPorId(Long id) {
         return estacionDeServicioRepository.findById(id)
                 .map(this::convertirAResponse);
     }
 
+    @Cacheable(value = "estacionesListado")
     public List<EstacionDeServicioResponse> listar() {
         return estacionDeServicioRepository.findAll()
                 .stream()
@@ -52,6 +66,14 @@ public class EstacionDeServicioService {
                 .toList();
     }
 
+    @Caching(
+            put = {
+                    @CachePut(value = "estacionesPorId", key = "#id", unless = "#result == null")
+            },
+            evict = {
+                    @CacheEvict(value = "estacionesListado", allEntries = true)
+            }
+    )
     public Optional<EstacionDeServicioResponse> actualizar(Long id, EstacionDeServicioRequest request) {
         return estacionDeServicioRepository.findById(id)
                 .map(estacionExistente -> {
@@ -72,6 +94,14 @@ public class EstacionDeServicioService {
                 });
     }
 
+    @Caching(
+            put = {
+                    @CachePut(value = "estacionesPorId", key = "#id", unless = "#result == null")
+            },
+            evict = {
+                    @CacheEvict(value = "estacionesListado", allEntries = true)
+            }
+    )
     public Optional<EstacionDeServicioResponse> eliminarLogicamente(Long id) {
         return estacionDeServicioRepository.findById(id)
                 .map(estacion -> {
